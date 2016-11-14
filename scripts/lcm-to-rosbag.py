@@ -75,6 +75,7 @@ class BagfileMaker(object):
   	img_msg.header.stamp.secs, img_msg.header.stamp.nsecs = getSecsNSecs(lcm_msg.utime)
   	img_msg.header.frame_id = 'cam'
 
+  	img_msg.encoding = "mono8"
   	img_msg.height = lcm_msg.height
   	img_msg.width = lcm_msg.width
   	img_msg.data = lcm_msg.data
@@ -199,7 +200,7 @@ def main():
 
 	#define rosbag output topic names
 	cam_topic_name = '/cam0/image_raw'
-	imu_topic_name = '/fcu/imu'
+	imu_topic_name = '/imu0'
 	vicon_topic_name = 'vicon/tf'
 
 
