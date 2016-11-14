@@ -113,6 +113,7 @@ class BagfileMaker(object):
 
 
   def closeBag(self):
+  	print("Finished writing", self.seq, "messages to rosbag file.")
   	self.bag.close()
 
 """
