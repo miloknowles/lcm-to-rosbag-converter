@@ -5,10 +5,18 @@
 
 import lcm
 import rosbag
+import cv2
+import numpy as np
+
+#check if compressed jpeg in lcm
+#use opencv to decompress jpeg
+# get into numpy array
+# 
 
 #the ROS message types for /cam0/image_raw and /fcu/imu
 from sensor_msgs.msg import Image, Imu
 from geometry_msgs.msg import TransformStamped
+from cv_bridge import CvBridge
 
 #get the LCM types for ins and image
 from sensors import ins_t, image_t
@@ -23,6 +31,7 @@ class BagfileMaker(object):
     self.minTime = 0
     self.maxTime = 0
     self.seq = 0
+    self.bridge = CvBridge()
 
   def imuHandler(self, event, imu_topic_name):
   	"""
@@ -68,17 +77,15 @@ class BagfileMaker(object):
   	#decode the event to get formatted camera data
   	lcm_msg = image_t.decode(event.data)
 
-  	#make a new rosbag image msg
-  	img_msg = Image()
+  	# decode the jpeg source images into opencv arrays
+  	src_img = np.fromstring(lcm_msg.data, dtype='uint8')
+  	raw_image = cv2.imdecode(src_img, cv2.CV_LOAD_IMAGE_GRAYSCALE)
+  	img_msg = self.bridge.cv2_to_imgmsg(raw_image, encoding="mono8")
 
+  	#make a new rosbag image msg
   	img_msg.header.seq = self.seq
   	img_msg.header.stamp.secs, img_msg.header.stamp.nsecs = getSecsNSecs(lcm_msg.utime)
   	img_msg.header.frame_id = 'cam'
-
-  	img_msg.encoding = "mono8"
-  	img_msg.height = lcm_msg.height
-  	img_msg.width = lcm_msg.width
-  	img_msg.data = lcm_msg.data
 
   	# increment the seq for the next message
   	self.seq += 1
@@ -186,7 +193,7 @@ def getSecsNSecs(utime):
 	"""
 	secs = int(utime // 1e6)
 	nsecs = int((float(utime) / 1e6 - secs) *1e9)
-	print(secs, nsecs)
+	#print(secs, nsecs)
 	return (secs, nsecs)
 
 
@@ -222,20 +229,20 @@ def main():
 
 		#check which type of LCM message we have and decode accordingly
 		if event.channel == img_channel:
-			print("Image channel")
+			#print("Image channel")
 			bfm.cameraHandler(event, cam_topic_name)
 
 		elif event.channel == ins_channel:
-			print("Imu channel")
+			#print("Imu channel")
 			bfm.imuHandler(event, imu_topic_name)
 
 		elif event.channel == vicon_channel:
-			print("Vicon channel")
+			#print("Vicon channel")
 			bfm.viconHandler(event, vicon_topic_name)
 		else:
 			print("Event from unknown channel.")
 
-	print("Min:", bfm.minTime, "Max:", bfm.maxTime)
+	#print("Min:", bfm.minTime, "Max:", bfm.maxTime)
 	#close the LCMLog
 	LCMLog.close()
 
