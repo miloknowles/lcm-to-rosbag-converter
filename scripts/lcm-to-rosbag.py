@@ -2,16 +2,12 @@
 # -*- coding: utf-8 -*-
 
 #convert LCM logs to Rosbags
-
 import lcm
 import rosbag
+
+#stuff for image conversion (mjpeg to numpy array)
 import cv2
 import numpy as np
-
-#check if compressed jpeg in lcm
-#use opencv to decompress jpeg
-# get into numpy array
-# 
 
 #the ROS message types for /cam0/image_raw and /fcu/imu
 from sensor_msgs.msg import Image, Imu
@@ -116,73 +112,12 @@ class BagfileMaker(object):
 
   	# increment the seq for the next message
   	self.seq += 1
-
   	self.bag.write(vicon_topic_name, vicon_msg, vicon_msg.header.stamp)
-
 
   def closeBag(self):
   	print("Finished writing", self.seq, "messages to rosbag file.")
   	self.bag.close()
 
-"""
-std_msgs/Header header
-  uint32 seq
-  time stamp
-  string frame_id
-string child_frame_id
-geometry_msgs/Transform transform
-  geometry_msgs/Vector3 translation
-    float64 x
-    float64 y
-    float64 z
-  geometry_msgs/Quaternion rotation
-    float64 x
-    float64 y
-    float64 z
-    float64 w
-"""
-
-
-"""
-Image message:
-
-std_msgs/Header header
-  uint32 seq
-  time stamp
-  string frame_id
-uint32 height
-uint32 width
-string encoding
-uint8 is_bigendian
-uint32 step
-uint8[] data
-"""
-
-"""
-Imu message:
-
-std_msgs/Header header
-  uint32 seq
-  time stamp
-  string frame_id
-geometry_msgs/Quaternion orientation
-  float64 x
-  float64 y
-  float64 z
-  float64 w
-float64[9] orientation_covariance
-geometry_msgs/Vector3 angular_velocity
-  float64 x
-  float64 y
-  float64 z
-float64[9] angular_velocity_covariance
-geometry_msgs/Vector3 linear_acceleration
-  float64 x
-  float64 y
-  float64 z
-float64[9] linear_acceleration_covariance
-
-"""
 
 def getSecsNSecs(utime):
 	"""
@@ -252,3 +187,64 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
+
+"""
+std_msgs/Header header
+  uint32 seq
+  time stamp
+  string frame_id
+string child_frame_id
+geometry_msgs/Transform transform
+  geometry_msgs/Vector3 translation
+    float64 x
+    float64 y
+    float64 z
+  geometry_msgs/Quaternion rotation
+    float64 x
+    float64 y
+    float64 z
+    float64 w
+"""
+
+
+"""
+Image message:
+
+std_msgs/Header header
+  uint32 seq
+  time stamp
+  string frame_id
+uint32 height
+uint32 width
+string encoding
+uint8 is_bigendian
+uint32 step
+uint8[] data
+"""
+
+"""
+Imu message:
+
+std_msgs/Header header
+  uint32 seq
+  time stamp
+  string frame_id
+geometry_msgs/Quaternion orientation
+  float64 x
+  float64 y
+  float64 z
+  float64 w
+float64[9] orientation_covariance
+geometry_msgs/Vector3 angular_velocity
+  float64 x
+  float64 y
+  float64 z
+float64[9] angular_velocity_covariance
+geometry_msgs/Vector3 linear_acceleration
+  float64 x
+  float64 y
+  float64 z
+float64[9] linear_acceleration_covariance
+
+"""
