@@ -116,6 +116,7 @@ class BagfileMaker(object):
 
   def closeBag(self):
   	print("Finished writing", self.seq, "messages to rosbag file.")
+  	print("Rosbag duration:", self.maxTime-self.minTime, "secs.")
   	self.bag.close()
 
 
@@ -136,9 +137,11 @@ def main():
 
 	#define the path to the lcm log
 	lcm_file_dir = '/home/mknowles/Datasets/STAR/run/'
-	lcm_file_name = 'lcmlog-2015-08-18.00'
-	bagfile_dir = '/home/mknowles/bagfiles/star'
-	bagfile_name = 'star0.bag'
+	bagfile_dir = '/home/mknowles/bagfiles/star/'
+
+	#NOTE: change the names here!!!!!
+	lcm_file_name = 'lcmlog-2015-08-18.02' #18.00 through 18.18
+	bagfile_name = 'star2.bag'
 
 	#define rosbag output topic names
 	cam_topic_name = '/cam0/image_raw'
@@ -152,7 +155,7 @@ def main():
 	vicon_channel = 'VICON_star_pose_2'
 
 	#make the bagfile maker
-	bfm = BagfileMaker(bagfile_name)
+	bfm = BagfileMaker(bagfile_dir + bagfile_name)
 
 	#make the LCM Event log to retrieve events from
 	LCMLog = lcm.EventLog(lcm_file_dir+lcm_file_name, 'r', overwrite=False)
@@ -161,7 +164,7 @@ def main():
 
 	#translate LCM events into ros msgs using the appropriate handler functions
 	for event in LCMLog:
-
+		print(bfm.seq)
 		#check which type of LCM message we have and decode accordingly
 		if event.channel == img_channel:
 			#print("Image channel")
@@ -175,7 +178,8 @@ def main():
 			#print("Vicon channel")
 			bfm.viconHandler(event, vicon_topic_name)
 		else:
-			print("Event from unknown channel.")
+			#print("Event from unknown channel.")
+			pass
 
 	#print("Min:", bfm.minTime, "Max:", bfm.maxTime)
 	#close the LCMLog
