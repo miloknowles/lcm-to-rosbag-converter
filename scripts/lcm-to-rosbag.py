@@ -141,8 +141,8 @@ def main():
 	bagfile_dir = '/home/mknowles/bagfiles/star/'
 
 	#NOTE: change the names here!!!!!
-	lcm_file_name = 'lcmlog-2015-08-18.01' #18.00 through 18.18
-	bagfile_name = 'star1.bag'
+	lcm_file_name = 'lcmlog-2015-08-18.00' #18.00 through 18.18
+	bagfile_name = 'star0.bag'
 
 	#define rosbag output topic names
 	cam_topic_name = '/cam0/image_raw'

@@ -8,7 +8,7 @@ struct ins_t
 	double gyro[3];  // [rad/s]
 	double mag[3];  // [G]
 	double accel[3];  // [m/s^2]
-	double quat[4];
+	double quat[4]; // (w,x,y,z)
 	
 	double pressure;
 	double rel_alt;
